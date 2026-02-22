@@ -9,7 +9,7 @@ import { toolCallAppropriatenessScorer, completenessScorer, translationScorer } 
 
 export const mastra = new Mastra({
   workflows: { weatherWorkflow },
-  agents: { weatherAgent },
+  agents: { weatherAgent: weatherAgent },
   scorers: { toolCallAppropriatenessScorer, completenessScorer, translationScorer },
   storage: new LibSQLStore({
     id: "mastra-storage",

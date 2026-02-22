@@ -23,9 +23,9 @@ interface WeatherResponse {
 export const weatherTool = createTool({
   id: 'get-weather',
   description: 'Get current weather for a location',
-  inputSchema: z.object({
-    location: z.string().describe('City name'),
-  }),
+  // inputSchema: z.object({
+  //   location: z.string().describe('City name'),
+  // }),
   outputSchema: z.object({
     temperature: z.number(),
     feelsLike: z.number(),
@@ -35,9 +35,32 @@ export const weatherTool = createTool({
     conditions: z.string(),
     location: z.string(),
   }),
-  execute: async (inputData) => {
-    return await getWeather(inputData.location);
+  // requireApproval: true
+  suspendSchema: z.object({
+    message: z.string()
+  }),
+  resumeSchema: z.object({
+    city: z.string(),
+  }),
+  execute: async (inputData, context) => {
+    // check if this is aresume with data
+    if(!context.agent?.resumeData) {
+      return context.agent?.suspend({
+        message: "What city do yo want to know the weather for?"
+      })
+    }
+
+    const {city} = context.agent.resumeData
+
+    console.log({
+      inputData,
+      city
+    })
+
+
+    return await getWeather(city);
   },
+  
 });
 
 const getWeather = async (location: string) => {
